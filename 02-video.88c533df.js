@@ -2979,12 +2979,39 @@ function toNumber(value) {
 
 module.exports = throttle;
 
+},{}],"js/storage.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.save = exports.load = void 0;
+var save = function save(key, value) {
+  try {
+    var serializedState = JSON.stringify(value);
+    localStorage.setItem(key, serializedState);
+  } catch (error) {
+    console.error("Set state error: ", error.message);
+  }
+};
+exports.save = save;
+var load = function load(key) {
+  try {
+    var serializedState = localStorage.getItem(key);
+    return serializedState === null ? undefined : JSON.parse(serializedState);
+  } catch (error) {
+    console.error("Get state error: ", error.message);
+  }
+};
+exports.load = load;
 },{}],"js/02-video.js":[function(require,module,exports) {
 "use strict";
 
 var _player = _interopRequireDefault(require("@vimeo/player"));
 var _lodash = _interopRequireDefault(require("lodash.throttle"));
+var _storage = require("./storage.js");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var SAVE_KEY_CODE = "videoplayer-current-time";
 var refs = {
   framePlayer: document.querySelector("#vimeo-player")
 };
@@ -2992,15 +3019,15 @@ var player = new _player.default(refs.framePlayer);
 updatingCurrentTime();
 player.on("timeupdate", (0, _lodash.default)(saveVideoTime, 1000));
 function updatingCurrentTime() {
-  var savedTime = localStorage.getItem("videoplayer-current-time");
+  var savedTime = (0, _storage.load)(SAVE_KEY_CODE);
   if (savedTime) {
     player.setCurrentTime(savedTime);
   }
 }
 function saveVideoTime(data) {
-  localStorage.setItem("videoplayer-current-time", "".concat(data.seconds));
+  (0, _storage.save)(SAVE_KEY_CODE, "".concat(data.seconds));
 }
-},{"@vimeo/player":"../node_modules/@vimeo/player/dist/player.es.js","lodash.throttle":"../node_modules/lodash.throttle/index.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"@vimeo/player":"../node_modules/@vimeo/player/dist/player.es.js","lodash.throttle":"../node_modules/lodash.throttle/index.js","./storage.js":"js/storage.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -3025,7 +3052,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59199" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60358" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
